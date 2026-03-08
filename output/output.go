@@ -17,6 +17,7 @@ func ToFile(m *ui.Model, path string) error {
 	)
 
 	path = os.ExpandEnv(path)
+	path = filepath.Clean(path)
 	ext := filepath.Ext(path)
 
 	switch ext {
@@ -33,7 +34,7 @@ func ToFile(m *ui.Model, path string) error {
 	default:
 		output = []byte(m.List.UnstyledString())
 	}
-	if err := os.WriteFile(path, output, 0664); err != nil {
+	if err := os.WriteFile(path, output, 0600); err != nil {
 		return fmt.Errorf("failed to write to file: %w", err)
 	}
 

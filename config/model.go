@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -68,7 +69,8 @@ func AddEntry(path, binding string, kbIgnorePrefix bool) error {
 	}
 
 	path = os.ExpandEnv(path)
-	if err := os.WriteFile(path, data, 0644); err != nil {
+	path = filepath.Clean(path)
+	if err := os.WriteFile(path, data, 0600); err != nil {
 		return fmt.Errorf("failed to write keyb file: %w", err)
 	}
 

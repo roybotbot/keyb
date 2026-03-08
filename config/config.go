@@ -140,7 +140,7 @@ func Parse(flagCPath, flagKPath string) (Apps, *Config, error) {
 	}
 
 	basePath := filepath.Join(xdgConfigDir, defaultConfigDir)
-	err = os.MkdirAll(basePath, 0744)
+	err = os.MkdirAll(basePath, 0700)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create config dir: %w", err)
 	}
@@ -171,6 +171,7 @@ func UnmarshalConfig(configFile, basePath string) (*Config, error) {
 
 	res := newDefaultConfig(basePath)
 	configFile = os.ExpandEnv(configFile)
+	configFile = filepath.Clean(configFile)
 
 	file, err := os.ReadFile(configFile)
 	if err != nil {
@@ -208,6 +209,7 @@ func UnmarshalKeyb(keybFile, basePath string) (Apps, error) {
 	}
 
 	keybFile = os.ExpandEnv(keybFile)
+	keybFile = filepath.Clean(keybFile)
 	file, err := os.ReadFile(keybFile)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -218,7 +220,7 @@ func UnmarshalKeyb(keybFile, basePath string) (Apps, error) {
 				return nil, fmt.Errorf("failed to generate default keyb: %w", err)
 			}
 
-			if err := os.WriteFile(keybFile, data, 0644); err != nil {
+			if err := os.WriteFile(keybFile, data, 0600); err != nil {
 				return nil, fmt.Errorf("failed to create keyb file: %w", err)
 			}
 			return k, nil

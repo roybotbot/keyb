@@ -6,15 +6,14 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/" 
+    directory: "/"
     schedule:
       interval: "weekly"
     commit-message:
       prefix: "chore"
       include: "scope"
-updates:
   - package-ecosystem: "github-actions"
-    directory: "/" 
+    directory: "/"
     schedule:
       interval: "weekly"
     commit-message:
