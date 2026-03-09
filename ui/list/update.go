@@ -67,6 +67,69 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
+// handleScroll processes scroll key bindings shared between normal and search modes.
+// Returns true if the key was handled.
+func (m *Model) handleScroll(msg tea.KeyMsg) bool {
+	switch {
+	case key.Matches(msg, m.keys.UpFocus):
+		m.cursor--
+		if m.cursorPastViewTop() {
+			m.viewport.LineUp(1)
+		}
+	case key.Matches(msg, m.keys.DownFocus):
+		m.cursor++
+		if m.cursorPastViewBottom() {
+			m.viewport.LineDown(1)
+		}
+
+	case key.Matches(msg, m.keys.HalfUp):
+		m.cursor -= m.viewport.Height / 2
+		if m.cursorPastViewTop() {
+			m.viewport.HalfViewUp()
+		}
+		// don't loop around
+		if m.cursorPastBeginning() {
+			m.cursorToBeginning()
+			m.viewport.GotoTop()
+		}
+	case key.Matches(msg, m.keys.HalfDown):
+		m.cursor += m.viewport.Height / 2
+		if m.cursorPastViewBottom() {
+			m.viewport.HalfViewDown()
+		}
+		// don't loop around
+		if m.cursorPastEnd() {
+			m.cursorToEnd()
+			m.viewport.GotoBottom()
+		}
+
+	case key.Matches(msg, m.keys.FullUp):
+		m.cursor -= m.viewport.Height
+		if m.cursorPastViewTop() {
+			m.viewport.ViewUp()
+		}
+		// don't loop around
+		if m.cursorPastBeginning() {
+			m.cursorToBeginning()
+			m.viewport.GotoTop()
+		}
+	case key.Matches(msg, m.keys.FullDown):
+		m.cursor += m.viewport.Height
+		if m.cursorPastViewBottom() {
+			m.viewport.ViewDown()
+		}
+		// don't loop around
+		if m.cursorPastEnd() {
+			m.cursorToEnd()
+			m.viewport.GotoBottom()
+		}
+
+	default:
+		return false
+	}
+	return true
+}
+
 func (m *Model) handleNormal(msg tea.Msg) tea.Cmd {
 
 	switch msg := msg.(type) {
@@ -93,64 +156,6 @@ func (m *Model) handleNormal(msg tea.Msg) tea.Cmd {
 				m.viewport.LineDown(1)
 			}
 
-		case key.Matches(msg, m.keys.UpFocus):
-			m.cursor--
-			if m.cursorPastViewTop() {
-				m.viewport.LineUp(1)
-			}
-		case key.Matches(msg, m.keys.DownFocus):
-			m.cursor++
-			if m.cursorPastViewBottom() {
-				m.viewport.LineDown(1)
-			}
-
-		case key.Matches(msg, m.keys.HalfUp):
-			m.cursor -= m.viewport.Height / 2
-			if m.cursorPastViewTop() {
-				m.viewport.HalfViewUp()
-			}
-
-			// don't loop around
-			if m.cursorPastBeginning() {
-				m.cursorToBeginning()
-				m.viewport.GotoTop()
-			}
-		case key.Matches(msg, m.keys.HalfDown):
-			m.cursor += m.viewport.Height / 2
-			if m.cursorPastViewBottom() {
-				m.viewport.HalfViewDown()
-			}
-
-			// don't loop around
-			if m.cursorPastEnd() {
-				m.cursorToEnd()
-				m.viewport.GotoBottom()
-			}
-
-		case key.Matches(msg, m.keys.FullUp):
-			m.cursor -= m.viewport.Height
-			if m.cursorPastViewTop() {
-				m.viewport.ViewUp()
-			}
-
-			// don't loop around
-			if m.cursorPastBeginning() {
-				m.cursorToBeginning()
-				m.viewport.GotoTop()
-			}
-
-		case key.Matches(msg, m.keys.FullDown):
-			m.cursor += m.viewport.Height
-			if m.cursorPastViewBottom() {
-				m.viewport.ViewDown()
-			}
-
-			// don't loop around
-			if m.cursorPastEnd() {
-				m.cursorToEnd()
-				m.viewport.GotoBottom()
-			}
-
 		case key.Matches(msg, m.keys.GoToFirstLine):
 			m.cursorToBeginning()
 			m.viewport.GotoTop()
@@ -167,14 +172,8 @@ func (m *Model) handleNormal(msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, m.keys.GoToBottom):
 			m.cursorToViewBottom()
 
-			// case key.Matches(msg, m.keys.CenterCursor):
-			// 	middle := m.viewport.Height / 2
-			// 	diff := m.cursor - middle
-			// 	if diff > 0 {
-			// 		m.viewport.LineDown(diff)
-			// 	} else {
-			// 		m.viewport.LineUp(diff)
-			// 	}
+		default:
+			m.handleScroll(msg)
 		}
 	}
 	return nil
@@ -197,67 +196,6 @@ func (m *Model) handleSearch(msg tea.Msg) tea.Cmd {
 			m.searchBar.Reset()
 			return m.startSearch()
 
-			// scrolling in search mode
-		case key.Matches(msg, m.keys.UpFocus):
-			m.cursor--
-			if m.cursorPastViewTop() {
-				m.viewport.LineUp(1)
-			}
-			return nil
-		case key.Matches(msg, m.keys.DownFocus):
-			m.cursor++
-			if m.cursorPastViewBottom() {
-				m.viewport.LineDown(1)
-			}
-			return nil
-
-		case key.Matches(msg, m.keys.HalfUp):
-			m.cursor -= m.viewport.Height / 2
-			if m.cursorPastViewTop() {
-				m.viewport.HalfViewUp()
-			}
-
-			// don't loop around
-			if m.cursorPastBeginning() {
-				m.cursorToBeginning()
-				m.viewport.GotoTop()
-			}
-		case key.Matches(msg, m.keys.HalfDown):
-			m.cursor += m.viewport.Height / 2
-			if m.cursorPastViewBottom() {
-				m.viewport.HalfViewDown()
-			}
-
-			// don't loop around
-			if m.cursorPastEnd() {
-				m.cursorToEnd()
-				m.viewport.GotoBottom()
-			}
-
-		case key.Matches(msg, m.keys.FullUp):
-			m.cursor -= m.viewport.Height
-			if m.cursorPastViewTop() {
-				m.viewport.ViewUp()
-			}
-
-			// don't loop around
-			if m.cursorPastBeginning() {
-				m.cursorToBeginning()
-				m.viewport.GotoTop()
-			}
-
-		case key.Matches(msg, m.keys.FullDown):
-			m.cursor += m.viewport.Height
-			if m.cursorPastViewBottom() {
-				m.viewport.ViewDown()
-			}
-
-			// don't loop around
-			if m.cursorPastEnd() {
-				m.cursorToEnd()
-				m.viewport.GotoBottom()
-			}
-
 		case key.Matches(msg, m.keys.Normal):
 			m.search = false
 			m.searchBar.Blur()
@@ -266,6 +204,11 @@ func (m *Model) handleSearch(msg tea.Msg) tea.Cmd {
 				m.filterState = unfiltered
 			}
 			return nil
+
+		default:
+			if m.handleScroll(msg) {
+				return nil
+			}
 		}
 	}
 

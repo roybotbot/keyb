@@ -31,7 +31,6 @@ type Model struct {
 	filteredTable  *table.Model
 	currentHeading string
 
-	title   string
 	debug   bool
 	cursor  int
 	maxRows int // max number of rows regardless of filterState
@@ -71,7 +70,6 @@ func New(t *table.Model, c *config.Config) Model {
 
 		filteredTable: table.NewEmpty(t.LineCount),
 
-		title:   c.Title,
 		debug:   c.Debug,
 		cursor:  0,
 		maxRows: t.LineCount,
@@ -144,10 +142,6 @@ func (m *Model) style(c *config.Config) {
 			row.Styles = s
 		}
 	}
-}
-
-func (m *Model) Init() tea.Cmd {
-	return nil
 }
 
 func (m *Model) Resize(width, height int) {

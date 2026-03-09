@@ -36,7 +36,6 @@ func TestNew(t *testing.T) {
 		assertEqual(t, tm.filterState, unfiltered)
 		assertEqual(t, tm.filteredTable.LineCount, 0)
 
-		assertEqual(t, tm.title, "foo")
 		assertEqual(t, tm.debug, true)
 		assertEqual(t, tm.table.Rows[0].Reversed, true)
 		assertEqual(t, tm.viewport.MouseWheelEnabled, true)
@@ -49,7 +48,6 @@ func TestNew(t *testing.T) {
 	t.Run("empty", func(t *testing.T) {
 		tm := New(table.New([]*table.Row{table.EmptyRow(), table.EmptyRow()}), testConfig)
 
-		assertEqual(t, tm.title, "foo")
 		assertEqual(t, tm.table.LineCount, 0)
 		assertEqual(t, tm.filterState, unfiltered)
 		assertEqual(t, tm.filteredTable.LineCount, 0)

@@ -38,11 +38,9 @@ func createParentTable(a config.Apps, sortKeys bool) *table.Model {
 
 	parent := appToTable(a[0].Name, *a[0], sortKeys)
 
-	if len(a) > 1 {
-		for _, k := range a[1:] {
-			child := appToTable(k.Name, *k, sortKeys)
-			parent.Join(child)
-		}
+	for _, k := range a[1:] {
+		child := appToTable(k.Name, *k, sortKeys)
+		parent.Join(child)
 	}
 	return parent
 }
@@ -81,20 +79,14 @@ func (m *Model) Init() tea.Cmd {
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
-	var (
-		cmd  tea.Cmd
-		cmds []tea.Cmd
-	)
-
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.List.Resize(msg.Width, msg.Height)
 	}
 
+	var cmd tea.Cmd
 	m.List, cmd = m.List.Update(msg)
-	cmds = append(cmds, cmd)
-
-	return m, tea.Batch(cmds...)
+	return m, cmd
 }
 
 func (m *Model) View() string {

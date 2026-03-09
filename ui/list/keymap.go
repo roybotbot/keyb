@@ -24,8 +24,6 @@ type KeyMap struct {
 	GoToMiddle    key.Binding
 	GoToBottom    key.Binding
 
-	CenterCursor key.Binding
-
 	Search      key.Binding
 	ClearSearch key.Binding
 	Normal      key.Binding
