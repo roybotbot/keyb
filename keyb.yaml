@@ -141,3 +141,99 @@
       key: "i"
     - name: "Display message"
       key: "~"
+
+# cp cheat sheet
+
+- name: cp (basic usage)
+  keybinds:
+    - name: "Copy file"
+      key: "cp <src> <dst>"
+    - name: "Copy multiple files to dir"
+      key: "cp <file1> <file2> <dir>"
+    - name: "Copy recursively (directory)"
+      key: "cp -r <src_dir> <dst_dir>"
+    - name: "Copy with verbose output"
+      key: "cp -v <src> <dst>"
+    - name: "Interactive (prompt before overwrite)"
+      key: "cp -i <src> <dst>"
+    - name: "Force overwrite"
+      key: "cp -f <src> <dst>"
+    - name: "No clobber (don't overwrite)"
+      key: "cp -n <src> <dst>"
+    - name: "Update (copy only if newer)"
+      key: "cp -u <src> <dst>"
+
+- name: cp (preserving attributes)
+  keybinds:
+    - name: "Preserve mode, ownership, timestamps"
+      key: "cp -p <src> <dst>"
+    - name: "Archive (preserve all, recursive)"
+      key: "cp -a <src> <dst>"
+    - name: "Preserve specific attributes"
+      key: "cp --preserve=mode,timestamps <src> <dst>"
+    - name: "Dereference symlinks"
+      key: "cp -L <src> <dst>"
+    - name: "Copy symlinks as symlinks"
+      key: "cp -d <src> <dst>"
+
+- name: cp (advanced)
+  keybinds:
+    - name: "Create hard links instead of copies"
+      key: "cp -l <src> <dst>"
+    - name: "Create symlinks instead of copies"
+      key: "cp -s <src> <dst>"
+    - name: "Copy with backup of destination"
+      key: "cp -b <src> <dst>"
+    - name: "Numbered backups"
+      key: "cp --backup=numbered <src> <dst>"
+    - name: "Set backup suffix"
+      key: "cp -S .bak <src> <dst>"
+    - name: "Sparse file handling"
+      key: "cp --sparse=always <src> <dst>"
+    - name: "Copy to target directory"
+      key: "cp -t <dir> <file1> <file2>"
+
+# mv cheat sheet
+
+- name: mv (basic usage)
+  keybinds:
+    - name: "Move/rename file"
+      key: "mv <src> <dst>"
+    - name: "Move multiple files to dir"
+      key: "mv <file1> <file2> <dir>"
+    - name: "Move with verbose output"
+      key: "mv -v <src> <dst>"
+    - name: "Interactive (prompt before overwrite)"
+      key: "mv -i <src> <dst>"
+    - name: "Force overwrite"
+      key: "mv -f <src> <dst>"
+    - name: "No clobber (don't overwrite)"
+      key: "mv -n <src> <dst>"
+    - name: "Update (move only if newer)"
+      key: "mv -u <src> <dst>"
+
+- name: mv (advanced)
+  keybinds:
+    - name: "Create backup of destination"
+      key: "mv -b <src> <dst>"
+    - name: "Numbered backups"
+      key: "mv --backup=numbered <src> <dst>"
+    - name: "Set backup suffix"
+      key: "mv -S .bak <src> <dst>"
+    - name: "Move to target directory"
+      key: "mv -t <dir> <file1> <file2>"
+    - name: "Rename file (same dir)"
+      key: "mv <old_name> <new_name>"
+    - name: "Move directory"
+      key: "mv <src_dir> <dst_dir>"
+
+- name: mv (common patterns)
+  keybinds:
+    - name: "Rename with glob (needs loop)"
+      key: "for f in *.txt; do mv \"$f\" \"${f%.txt}.md\"; done"
+    - name: "Move all files of type to dir"
+      key: "mv *.jpg <dir>"
+    - name: "Move hidden files"
+      key: "mv .* <dir>"
+    - name: "Swap two filenames"
+      key: "mv a tmp && mv b a && mv tmp b"

@@ -76,7 +76,9 @@ func New(t *table.Model, c *config.Config) Model {
 
 		margin:         c.Margin,
 		padding:        c.Padding,
-		scrollOffset:   5,
+		// scrollOffset accounts for non-viewport vertical space:
+		// searchBar(1) + counter(1) + border top/bottom(2) + padding + margin
+		scrollOffset:   4,
 		counterStyle:   lipgloss.NewStyle().Faint(true).Margin(0, 1),
 		promptLocation: c.PromptLocation,
 	}
@@ -145,7 +147,8 @@ func (m *Model) style(c *config.Config) {
 }
 
 func (m *Model) Resize(width, height int) {
-	m.viewport.Width = width
+	// Account for border (2), padding and margin on each side
+	m.viewport.Width = width - max(2, (m.padding*2+m.margin*2)) - 2
 	m.viewport.Height = height - m.scrollOffset
 }
 
@@ -174,7 +177,7 @@ func (m *Model) SyncContent(table *table.Model) {
 		return
 	}
 
-	if m.cursor > table.LineCount {
+	if m.cursor >= table.LineCount {
 		m.cursor = table.LineCount - 1
 	}
 

@@ -33,7 +33,7 @@ func (m *Model) View() string {
 	style := m.border.
 		Margin(m.margin).
 		Padding(m.padding).
-		Width(m.viewport.Width)
+		Width(m.viewport.Width + m.padding*2)
 	return style.Render(view)
 }
 

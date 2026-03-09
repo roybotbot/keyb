@@ -17,13 +17,14 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 
-		// to play nice with borders and truncation,
-		// <2 results in border exceeding max width
-		m.viewport.Width = msg.Width - max(2, (m.padding*2+m.margin*2))
+		// Account for border (2 chars) + padding + margin on each side.
+		// The border always renders on all sides (BorderStyle enables all sides
+		// when no specific sides are set), adding 1 char on left and right.
+		m.viewport.Width = msg.Width - max(2, (m.padding*2+m.margin*2)) - 2
 		m.viewport.Height = msg.Height - m.scrollOffset
 
-		m.table.MaxWidth = m.viewport.Width - m.padding*2
-		m.filteredTable.MaxWidth = m.viewport.Width - m.padding*2
+		m.table.MaxWidth = m.viewport.Width
+		m.filteredTable.MaxWidth = m.viewport.Width
 
 		if m.cursorPastViewBottom() {
 			m.cursor = m.viewport.YOffset + m.viewport.Height - 1
